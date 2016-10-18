@@ -1,4 +1,4 @@
-# RRT
+# RRT l
 Rendimiento en Redes de Telecomunicaciones
 
 Se trata de un repositorio de la asignatura RRT donde se publicarán y mantendrá actualizado el software base de simulación utilizado en la asignatura.
