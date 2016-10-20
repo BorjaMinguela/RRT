@@ -7,7 +7,6 @@
 
 
 (* ::Text:: *)
-(**)
 (*Desarrollar un sistema generador de n\[UAcute]meros aleatorios basado en un generador lineal*)
 (*congruencial mixto que siga una distribuci\[OAcute]n uniforme entre[0, 1].*)
 
@@ -52,13 +51,13 @@
 
 (* ::Input:: *)
 (*AcumSeries[serie_]:=Module[{acum=0}, acum+=#&/@serie]*)
-(*AcumSeries[serie_]:=Module[{acum=0}, Map[(acum+=#)&,serie]]*)
-(*InterArrivals=Table[RandomExp[100],{50000}];*)
+(*(*AcumSeries[serie_]:=Module[{acum=0}, Map[(acum+=#)&,serie]]*)*)
+(*InterArrivals=Table[RandomExp[100],{nmax}];*)
 
 
 (* ::Input:: *)
 (*ArrivalsTime=AcumSeries[InterArrivals];*)
-(*ListPlot[ArrivalsTimes]*)
+(*ListPlot[ArrivalsTime[[100;;120]]]*)
 
 
 (* ::Input:: *)
@@ -71,5 +70,9 @@
 
 (* ::Input:: *)
 (*FifoSchedulling[arrivals_,service_]:=Module[{n,checkTime},n=1;checkTime=arrivals[[1]];*)
-(*(If[checkTime>=#,checkTime+=service[[n++]],checkTime=#+service[[n++]]])&/@arrivals](*no funciona*)*)
+(*(If[checkTime>=#,checkTime+=service[[n++]],checkTime=#+service[[n++]]])&/@arrivals]*)
 (**)
+
+
+DepartureTime=FifoSchedulling[ArrivalsTime,ServiceTime];
+ListPlot[DepartureTime]
