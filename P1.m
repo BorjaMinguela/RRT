@@ -7,8 +7,7 @@
 
 
 (* ::Text:: *)
-(*Desarrollar un sistema generador de n\[UAcute]meros aleatorios basado en un generador lineal*)
-(*congruencial mixto que siga una distribuci\[OAcute]n uniforme entre[0, 1].*)
+(*Parte primera*)
 
 
 (* ::Input:: *)
@@ -30,7 +29,12 @@
 
 
 (* ::Input:: *)
-(*Histogram[Table[RandomExp[100],{50000}],60,"PDF"]*)
+(*Histogram[Table[RandomExp[100],{50000}],60,"PDF"] (*PDF Probability Density Function*)*)
+(*Histogram[Table[RandomExp[100],{50000}],60,"CDF"] (*CDF Cumulative Distributio function*)*)
+
+
+(* ::Input:: *)
+(*Parte segunda*)
 
 
 (* ::Input:: *)
@@ -76,3 +80,16 @@
 
 DepartureTime=FifoSchedulling[ArrivalsTime,ServiceTime];
 ListPlot[DepartureTime]
+
+
+(* ::Input:: *)
+(*EsperaTeorica[t_]:=1/(1-t)*)
+(*EsperaReal[t_]:=Total[DepartureTime-ArrivalsTime]/((1-t)*Length[DepartureTime])*)
+
+
+(* ::Input:: *)
+(*EsperaReal[0.1]*)
+
+
+(* ::Input:: *)
+(*Plot[{EsperaTeorica[t],EsperaReal[t]},{t,0,1},PlotLegends->"Expressions"]*)
