@@ -21,7 +21,6 @@
 
 
 (* ::Input:: *)
-(**)
 (*Module[*)
 (*{tp=0.01,tack=0.05,winMod=8,nsec=0},*)
 (*SetIniPar[tP_,tAck_,nSec_]:=*)
@@ -64,7 +63,6 @@
 
 
 (* ::Input:: *)
-(**)
 (*SetIniPar[0.01,0,0]; (*Modifica parametros de la libreria (la inicializa)*)*)
 (**)
 (*PacketsTx=FifoPacketTxSW[PacketArrivalsGenTimePeriod(*generacion de paquetes de llegdas*)[RandomExp[1.5](*depende de Ti y ro*),*)
@@ -133,3 +131,76 @@
 
 (* ::Input:: *)
 (*Manipulate[Plot[(1-p)/(a tI),{p,0,1}],{a,1,8,1},{tI(*tiempo insercion*),0.01,0.1},{ro,0.1,1},{p,0,1}]*)
+
+
+(* ::Input:: *)
+(*ThMaxSW[p_,a_,tI_]:=(1-p)/(a tI);*)
+(*(*Trabajar en regime de saturaci\[OAcute]n*)*)
+(*Manipulate[Show[Plot[ThMaxSW[p,a,tI],{a,1,10}],*)
+(*Graphics[(PointSize[Large],Point[(a,ThMaxSW[p,a,tI]}])}]]*)
+
+
+(* ::Input:: *)
+(*(*...{tI,0.01,1},{a,1,10,1},{ro,0.5,1,0.1},*)*)
+
+
+Go back N simple
+
+
+Module[
+{tp=0.01,tack=0.05,winMod=8,nsec=0},
+SetIniPar[tP_,tAck_,nSec_]:=
+(tp=tP;tack=tAck;nsec=nSec;SetIniParDraw[tp,tack];{tp,tack,winMod});
+GetIniPar[]:=
+{tp,tack,winMod};
+PacketArrivalsGenTimePeriod[lambdaArr_ (*aqui es donde se ejecuta el randomexp*) ,muServ_(*deberia ser tiempo, no mu*),lastTime_,iniTime_:0](*funcion para generar la llegada de paquetes en el rango de simulacion. Ha construido paquetes con una tasa landa acumulativa*):=NestWhileList[ {(acumTime+=lambdaArr),muServ,nsec++,0,0}&,{acumTime=iniTime+lambdaArr,muServ,nsec++,0,0},(#[[1]] <lastTime )&]
+;
+SetAttributes[PacketArrivalsGenTimePeriod,HoldAll];
+
+
+FifoPacketTxGBN[arrivals_,pcomb_]:=
+Module[{checkTime,nrTx},checkTime=arrivals[[1,1]];
+
+SetCheckTimeGBN[time_]:=(checkTime=time);
+
+GetDepartureGBN[arr_,error_]:=
+Module[{ret=arr[[1]]},
+(If[checkTime>=arr[[1]],ret=checkTime;checkTime+=arr[[2]],
+checkTime=arr[[1]]+arr[[2]]];
+If[error==1,checkTime+=2 tp+tack];ret)
+];(*sin tener encuenta retransmisiones*)
+(*con retransmisiones*)
+GetPacketRTxGBN[pck_,perror_]:=
+Module[{error=If[RandomData[]<=perror,1,0]},
+({GetDepartureGBN[pck,error],pck[[2]],pck[[3]],
+error,pck[[5]]+1})];
+
+Flatten[
+Map[
+(NestWhileList[
+(GetPacketRTxGBN[#,pcomb]&),
+GetPacketRTxGBN[#,pcomb],(#[[4]]==1)&])&,arrivals],1]
+];
+LaunchSimTxGBN[tasa_,tp_,p_,time_,lambda_]:=(SetIniPar[tp,0,0];FifoPacketTxGBN[PacketArrivalsGenTimePeriod[tasa,lambda,time,0],p]);
+SetAttributes[LaunchSimTxGBN,HoldAll];
+]
+
+
+(* ::Input:: *)
+(*SetIniPar[0.01,0,4]; *)
+
+
+(* ::Input:: *)
+(*PacketsTx=FifoPacketTxGBN[PacketArrivalsGenTimePeriod(*generacion de paquetes de llegdas*)[RandomExp[1.5](*depende de Ti y ro*),*)
+(*RandomExp[2.5],20,0],.2](* Array que quiero construir con paquetes*)*)
+(**)
+
+
+(* ::Input:: *)
+(*Manipulate[*)
+(*Show[DrawWin[tw,ww,10],(*Dibuja el marco de la ventana*)*)
+(* Map[(DrawPacketTx[#])&,SelectPacketInWin[PacketsTx] (*selecciona los paquetes que van a entrar en la ventana*)]]*)
+(**)
+(*,{tw,0,30},{ww*)
+(*(*ancho de ventana*),0.01,10}*)
+(*]*)
