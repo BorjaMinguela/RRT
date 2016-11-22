@@ -1,7 +1,15 @@
 (* ::Package:: *)
 
 (* ::Input:: *)
-(*Parte primera (referencia Armando)*)
+(*Practica 2*)
+
+
+(* ::Input:: *)
+(*Parte primera: Stop & Wait*)
+
+
+(* ::Input:: *)
+(*ClearAll;(*Limpiamos variables*)*)
 
 
 (* ::Input:: *)
@@ -17,7 +25,7 @@
 (*RandomData[]:=N[(RndNumber =Mod[(a RndNumber+c),m])/(m-1)];*)
 (*RandomExp[rate_]:=(-Log[RandomData[]]/rate);*)
 (*GetRndNumber[]:=RndNumber*)
-(*]*)
+(*](*Funciones aleatorias*)*)
 
 
 (* ::Input:: *)
@@ -81,7 +89,7 @@
 
 
 (* ::Input:: *)
-(*Parte segunda *)
+(*Parte segunda: Throughput SW*)
 
 
 (* ::Input:: *)
@@ -102,7 +110,7 @@
 
 
 (* ::Input:: *)
-(*ThMaximo[ListaPaquetes]*)
+(*ThMaximo[ListaPaquetes](*Throughput maximo*)*)
 
 
 (* ::Input:: *)
@@ -118,7 +126,7 @@
 
 
 (* ::Input:: *)
-(*Tt=Last[ListaPaquetes[[1]]+0.05(*tack*)];*)
+(*Tt=Last[ListaPaquetes[[1]]]+0.05(*tack*);*)
 
 
 (* ::Input:: *)
@@ -130,21 +138,22 @@
 
 
 (* ::Input:: *)
-(*Manipulate[Plot[(1-p)/(a tI),{p,0,1}],{a,1,8,1},{tI(*tiempo insercion*),0.01,0.1},{ro,0.1,1},{p,0,1}]*)
+(*Manipulate[Plot[(1-p)/(a tI),{p,0,1}],{a,1,8,1},{tI(*tiempo insercion*),0.01,0.1},{ro,0.01,1}]*)
 
 
 (* ::Input:: *)
-(*ThMaxSW[p_,a_,tI_]:=(1-p)/(a tI);*)
-(*(*Trabajar en regime de saturaci\[OAcute]n*)*)
-(*Manipulate[Show[Plot[ThMaxSW[p,a,tI],{a,1,10}],*)
-(*Graphics[(PointSize[Large],Point[(a,ThMaxSW[p,a,tI]}])}]]*)
+(**)
+
+
+Parte 3: Go Back N
 
 
 (* ::Input:: *)
-(*(*...{tI,0.01,1},{a,1,10,1},{ro,0.5,1,0.1},*)*)
+(*ClearAll;*)
 
 
-Go back N simple
+(* ::Input:: *)
+(*Needs["drawTx`"];*)
 
 
 Module[
@@ -168,8 +177,8 @@ Module[{ret=arr[[1]]},
 (If[checkTime>=arr[[1]],ret=checkTime;checkTime+=arr[[2]],
 checkTime=arr[[1]]+arr[[2]]];
 If[error==1,checkTime+=2 tp+tack];ret)
-];(*sin tener encuenta retransmisiones*)
-(*con retransmisiones*)
+];(*COmprobamos si ha habido error a la hora de generar los tiempos*)
+
 GetPacketRTxGBN[pck_,perror_]:=
 Module[{error=If[RandomData[]<=perror,1,0]},
 ({GetDepartureGBN[pck,error],pck[[2]],pck[[3]],
@@ -204,3 +213,35 @@ SetAttributes[LaunchSimTxGBN,HoldAll];
 (*,{tw,0,30},{ww*)
 (*(*ancho de ventana*),0.01,10}*)
 (*]*)
+
+
+(* ::Input:: *)
+(*Parte cuarta: Throughput GBN*)
+
+
+(* ::Input:: *)
+(*SetIniPar[0.01,0,0];*)
+
+
+(* ::Input:: *)
+(*ListaPaquetes=FifoPacketTxGBN[PacketArrivalsGenTimePeriod[RandomExp[1.5],RandomExp[2.5],2000,0],.2];*)
+
+
+(* ::Input:: *)
+(*ThMaximo[lstpacket_]:=Last[lstpacket][[3]]/Last[lstpacket][[1]];*)
+
+
+(* ::Input:: *)
+(*ThMaximo[ListaPaquetes](*Th maximo que se alcanza en el ultimo pkt*)*)
+
+
+(* ::Input:: *)
+(*ThListFn[lstpacket_]:=Map[#[[3]]/#[[1]]&,lstpacket];*)
+
+
+(* ::Input:: *)
+(*ListPlot[ThListFn[ListaPaquetes]]*)
+
+
+(* ::Input:: *)
+(*Manipulate[Plot[(1-p)/(tI*(1+(a-1)*p)),{p,0,1}],{a,1,8,1},{tI(*tiempo insercion*),0.01,0.1}](*Teorico*)*)
