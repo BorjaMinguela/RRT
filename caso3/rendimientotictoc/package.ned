@@ -1,0 +1,3 @@
+package rendimientotictoc;
+
+@license(LGPL);
