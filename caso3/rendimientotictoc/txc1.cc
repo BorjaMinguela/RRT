@@ -12,6 +12,7 @@ class Txc1 : public cSimpleModule
 // The module class needs to be registered with OMNeT++
 Define_Module(Txc1);
 int i=0;
+int lenPkt;
 void Txc1::initialize()
 {
     // Initialize is called at the beginning of the simulation.
@@ -23,6 +24,7 @@ void Txc1::initialize()
         // arbitrary string which will be the name of the message object.
         cPacket *msg = new cPacket("Msg0",0,1000);
         send(msg, "out");
+        lenPkt=1000;
     }
 }
 void Txc1::handleMessage(cMessage *msg)
@@ -69,13 +71,14 @@ void Txc1::handleMessage(cMessage *msg)
             if (strcmp("tic", getName()) == 0) {
                        if (strcmp(msg->getName(),message2)==0){
                            sprintf(message1,"Msg%d",++i);
-                           cPacket *msg = new cPacket(message1,0,1000);
+                           lenPkt=rand()%(1500*8-50*8+1)+50*8;
+                           cPacket *msg = new cPacket(message1,0,lenPkt);
                            //msg->addPar("error");
                            send(msg, "out");
                        }
                        if (strcmp(msg->getName(),message3)==0){
                            sprintf(message1,"Msg%d",i);
-                           cPacket *msg = new cPacket(message1,0,1000);
+                           cPacket *msg = new cPacket(message1,0,lenPkt);
                            send(msg, "out");
                        }
 
