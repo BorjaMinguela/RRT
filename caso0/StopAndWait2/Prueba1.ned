@@ -23,10 +23,18 @@ import ned.IdealChannel;
 simple Txc2
 {
     gates:
-        //input in;
+        input in;
         input inFuente;
-        //output out;
+        output out;
 }
+
+simple Receptor
+{
+    gates:
+        input in;
+        output out;
+}
+
 
 //
 // TODO documentation
@@ -39,11 +47,14 @@ network Network
             @display("p=66,87");
         }
         emisor: Txc2 {
-            @display("p=169.75002,80.51");
+            @display("p=175.57,86.33");
+        }
+        receptor: Receptor {
+            @display("p=310.40002,86.33");
         }
     connections:
-        //emisor.out --> DatarateChannel {  per = default(0.4); datarate = default(10000bps); } --> toc.in;
-        //toc.out --> DatarateChannel {  per = default(0.4); datarate = default(10000bps); } --> tic.in;
+        emisor.out --> DatarateChannel {  per = default(0.0); datarate = default(10000bps); } --> receptor.in;
+        receptor.out --> DatarateChannel {  per = default(0.0); datarate = default(10000bps); } --> emisor.in;
         fuente.out --> IdealChannel --> emisor.inFuente;
 }
 

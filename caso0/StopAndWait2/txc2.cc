@@ -4,6 +4,7 @@
 #include <iostream>
 //#include <cdataratechannel.h>
 #include <vector>
+#include <deque>
 using namespace omnetpp;
 
 
@@ -21,14 +22,22 @@ cPacket *msg;
 cMessage *recep;
 //cDataRateChannel canal;
 int contador2;
-std::vector<cPacket *> colaFuente;
+//std::vector<cPacket *> colaFuente;
+std::deque<cPacket *> colaFuente;
+std::deque<cPacket *> buffer;
+//omnetpp::cChannel canal;
+int ventana;
+int mensajesEnviados;
+
 void Txc2::initialize()
 {
         msg = new cPacket("Msg0",0,100);
         contador2=0;
         std::cout<<"Inicio con cola";
         recep=new cMessage("recep");
-        //canal=gate("out")->getTransmisisionChannel();
+        ventana=1;
+        mensajesEnviados=0;
+        //canal=gate("out")->getTransmissionChannel();
         //send(recep,"out");
 
 
@@ -36,9 +45,25 @@ void Txc2::initialize()
 
 void Txc2::handleMessage(cMessage *msg)
 {
-    if (strcmp("emisor", getName()) == 0) {
-        if(strcmp("newMessage",msg->getName())==0){
+    char message1[20];
+    char message2[20];
+    char message3[20];
+    sprintf(message1,"Msg%d",contador2);
+    sprintf(message2,"ACK%d",contador2);
+    sprintf(message3,"NACK%d",contador2);
+    if(strcmp("newMessage",msg->getName())==0){
             std::cout<<"Nuevo mensaje";
+            sprintf(message1,"Msg%d",++contador2);
+            int lenPkt=rand()%(1500*8-50*8+1)+50*8;
+            cPacket *msg = new cPacket(message1,0,lenPkt);
+            colaFuente.push_back(msg);
+            if(mensajesEnviados<ventana){
+                buffer.push_back(msg);
+                cPacket *msg = colaFuente.front();
+                colaFuente.pop_front();
+                send(msg,"out");
+                mensajesEnviados++;
+            }
             /*Añadir mensaje a la cola
              * if(mensajesEnviados<ventana)
              *  send
@@ -53,6 +78,16 @@ void Txc2::handleMessage(cMessage *msg)
                 send(salida,"out");
             */}
         if(strcmp("ACK",msg->getName())==0){
+            buffer.clear();
+            ventana++;
+            mensajesEnviados=0;
+            if(!colaFuente.empty()){
+                cPacket *msg = colaFuente.front();
+                buffer.push_back(msg);
+                colaFuente.pop_front();
+                send(msg,"out");
+                mensajesEnviados++;
+            }
             /*
              * ventana++;
              * mensajesEnviados=0;
@@ -73,7 +108,6 @@ void Txc2::handleMessage(cMessage *msg)
             //else{
               //  scheduleAt(simTime()+0.1, new cMessage("recep"));
             //}
-        }
     }
     /*recep=new cMessage("recep");
     send(recep,"out");
@@ -162,4 +196,4 @@ void Txc2::handleMessage(cMessage *msg)
             }
         }*/
   //  send(msg, "out"); // send out the message
-}
+//}

@@ -1,12 +1,12 @@
 #
-# OMNeT++/OMNEST Makefile for StopAndWait
+# OMNeT++/OMNEST Makefile for StopAndWait2
 #
 # This file was generated with the command:
 #  opp_makemake -f --deep -O out
 #
 
 # Name of target to be created (-o option)
-TARGET = StopAndWait$(EXE_SUFFIX)
+TARGET = StopAndWait2$(EXE_SUFFIX)
 
 # User interface (uncomment one) (-u option)
 USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(QTENV_LIBS) $(CMDENV_LIBS)
@@ -15,7 +15,7 @@ USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(QTENV_LIBS) $(CMDENV_LI
 #USERIF_LIBS = $(QTENV_LIBS)
 
 # C++ include paths (with -I)
-INCLUDE_PATH = -I.
+INCLUDE_PATH = -I. -Iresults
 
 # Additional object and library files to link with
 EXTRA_OBJS =
@@ -29,7 +29,7 @@ PROJECTRELATIVE_PATH =
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
-OBJS = $O/fuente.o $O/txc1.o $O/txc2.o
+OBJS = $O/fuente.o $O/fuente2.o $O/receptor.o $O/txc1.o $O/txc2.o
 
 # Message files
 MSGFILES =
@@ -114,19 +114,23 @@ smheaders: $(SMFILES:.sm=_sm.h)
 clean:
 	$(qecho) Cleaning...
 	$(Q)-rm -rf $O
-	$(Q)-rm -f StopAndWait StopAndWait.exe libStopAndWait.so libStopAndWait.a libStopAndWait.dll libStopAndWait.dylib
+	$(Q)-rm -f StopAndWait2 StopAndWait2.exe libStopAndWait2.so libStopAndWait2.a libStopAndWait2.dll libStopAndWait2.dylib
 	$(Q)-rm -f ./*_m.cc ./*_m.h ./*_sm.cc ./*_sm.h
+	$(Q)-rm -f results/*_m.cc results/*_m.h results/*_sm.cc results/*_sm.h
 
 cleanall: clean
 	$(Q)-rm -rf $(PROJECT_OUTPUT_DIR)
 
 depend:
 	$(qecho) Creating dependencies...
-	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES) $(SM_CC_FILES)  ./*.cc
+	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES) $(SM_CC_FILES)  ./*.cc results/*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 $O/fuente.o: fuente.cc \
 	fuente.h
+$O/fuente2.o: fuente2.cc \
+	fuente.h
+$O/receptor.o: receptor.cc
 $O/txc1.o: txc1.cc
 $O/txc2.o: txc2.cc
 
