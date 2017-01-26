@@ -1,0 +1,3 @@
+package stopandwait;
+
+@license(LGPL);
