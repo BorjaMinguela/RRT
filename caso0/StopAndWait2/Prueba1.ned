@@ -16,15 +16,18 @@
 package stopandwait;
 
 import ned.DatarateChannel;
+
 import ned.IdealChannel;
 
 
 simple Txc2
 {
     gates:
-        input in;
-        output out;
+        //input in;
+        input inFuente;
+        //output out;
 }
+
 //
 // TODO documentation
 //
@@ -32,15 +35,15 @@ network Network
 {
     @display("bgb=389,190");
     submodules:
-        tic: Fuente {
+        fuente: Fuente2 {
             @display("p=66,87");
         }
-        toc: Txc2 {
-            @display("p=258,81");
+        emisor: Txc2 {
+            @display("p=169.75002,80.51");
         }
     connections:
-        tic.out --> DatarateChannel {  delay = default(100ms); per = default(0.4); datarate = default(10000bps); } --> toc.in;
-
-        toc.out --> IdealChannel --> tic.in;
+        //emisor.out --> DatarateChannel {  per = default(0.4); datarate = default(10000bps); } --> toc.in;
+        //toc.out --> DatarateChannel {  per = default(0.4); datarate = default(10000bps); } --> tic.in;
+        fuente.out --> IdealChannel --> emisor.inFuente;
 }
 

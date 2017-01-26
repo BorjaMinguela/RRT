@@ -1,29 +1,12 @@
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-// 
-// You should have received a copy of the GNU Lesser General Public License
-// along with this program.  If not, see http://www.gnu.org/licenses/.
-// 
 
 #include <string.h>
 #include <omnetpp.h>
 #include <iostream>
+//#include <cdataratechannel.h>
 #include <vector>
 using namespace omnetpp;
 
-/**
- * Derive the Txc2 class from cSimpleModule. In the Tictoc1 network,
- * both the `tic' and `toc' modules are Txc1 objects, created by OMNeT++
- * at the beginning of the simulation.
- */
+
 class Txc2 : public cSimpleModule
 {
   protected:
@@ -36,30 +19,63 @@ class Txc2 : public cSimpleModule
 Define_Module(Txc2);
 cPacket *msg;
 cMessage *recep;
+//cDataRateChannel canal;
 int contador2;
-std::vector<cPacket *> cola;
+std::vector<cPacket *> colaFuente;
 void Txc2::initialize()
 {
-    // Initialize is called at the beginning of the simulation.
-    // To bootstrap the tic-toc-tic-toc process, one of the modules needs
-    // to send the first message. Let this be `tic'.
-    // Am I Tic or Toc?
-
-
-        // create and send first message on gate "out". "tictocMsg" is an
-        // arbitrary string which will be the name of the message object.
         msg = new cPacket("Msg0",0,100);
         contador2=0;
         std::cout<<"Inicio con cola";
         recep=new cMessage("recep");
-        send(recep,"out");
+        //canal=gate("out")->getTransmisisionChannel();
+        //send(recep,"out");
 
 
 }
 
 void Txc2::handleMessage(cMessage *msg)
 {
-    recep=new cMessage("recep");
+    if (strcmp("emisor", getName()) == 0) {
+        if(strcmp("newMessage",msg->getName())==0){
+            std::cout<<"Nuevo mensaje";
+            /*Añadir mensaje a la cola
+             * if(mensajesEnviados<ventana)
+             *  send
+             *
+             */
+
+
+
+            /*if (!colaFuente.empty()){
+                cPacket *salida=colaFuente.back();
+                colaFuente.pop_back();
+                send(salida,"out");
+            */}
+        if(strcmp("ACK",msg->getName())==0){
+            /*
+             * ventana++;
+             * mensajesEnviados=0;
+             * if(!cola.empty())
+             *  send
+             *
+             */
+        }
+        if(strcmp("NACK",msg->getName())==0){
+            /*
+             * if(ventana>2)
+             *  ventana--;
+             * mensajesEnviados=0;
+             * sendBuffer
+             */
+        }
+
+            //else{
+              //  scheduleAt(simTime()+0.1, new cMessage("recep"));
+            //}
+        }
+    }
+    /*recep=new cMessage("recep");
     send(recep,"out");
     char message[20];
     sprintf(message,"Msg%d",contador2);
@@ -77,7 +93,7 @@ void Txc2::handleMessage(cMessage *msg)
         cPacket *salida=cola.back();
         cola.pop_back();
         //send(salida,"out");
-    }
+    }*/
 
 
    /* if (strcmp("tic", getName()) == 0) {

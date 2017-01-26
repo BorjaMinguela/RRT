@@ -13,15 +13,32 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package stopandwait;
-simple Fuente2
+#include "fuente.h"
+#include <string.h>
+#include <omnetpp.h>
+#include <iostream>
+#include <random>
+
+using namespace omnetpp;
+class Fuente2 : public cSimpleModule{
+    virtual void initialize() override;
+    virtual void handleMessage(cMessage *msg) override;
+};
+Define_Module(Fuente2);
+cMessage *nMessage;
+
+void Fuente2::initialize()
 {
-    parameters:
-        @display("i=block/source");
-        volatile double interArrivalTime @unit(s);
-        double startTime @unit(s) = default(interArrivalTime);
-        
-         gates:
-        output out;
-        //input in;
+    std::exponential_distribution<> rng (par("interArrivalTime"));
+
+    scheduleAt(0, new cMessage("newJobTimer"));
 }
+
+void Fuente2::handleMessage(cMessage *msg)
+{
+    nMessage=new cMessage("newMessage");
+    send(nMessage,"out");
+    scheduleAt(simTime() + par("interArrivalTime").doubleValue(), msg);
+
+}
+

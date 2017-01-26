@@ -17,14 +17,16 @@
 #include <string.h>
 #include <omnetpp.h>
 #include <iostream>
+#include <deque>
 
 using namespace omnetpp;
 class Fuente : public cSimpleModule{
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
+    std::deque<cPacket *> colaFuente;
 };
 Define_Module(Fuente);
-std::vector<cPacket *> colaFuente;
+
 void Fuente::initialize()
 {
     //SourceBase::initialize();
@@ -48,28 +50,18 @@ void Fuente::handleMessage(cMessage *msg)
             scheduleAt(simTime()+0.1, new cMessage("recep"));
         }
     }
+    if(strcmp("recep",msg->getName())==0){
+
+    }
     else{
         char message[20];
         int contador=0;
             sprintf(message,"Msg%d",contador);
-            int length;
-                length=rand()%(1500*8-50*8+1)+50*8;
-        ASSERT(msg->isSelfMessage());
-
-        //if ((numJobs < 0 || numJobs > jobCounter) && (stopTime < 0 || stopTime > simTime())) {
-            // reschedule the timer for the next message
+            int length=rand()%(1500*8-50*8+1)+50*8;
             scheduleAt(simTime() + par("interArrivalTime").doubleValue(), msg);
-        //scheduleAt(simTime() + 2, msg);
-
             cPacket *job = new cPacket(message,0,length);
             contador++;
             colaFuente.push_back(job);
-            //send(job, "out");
-        //}
-        //else {
-            // finished
-          //  delete msg;
-        //}
     }
 }
 
